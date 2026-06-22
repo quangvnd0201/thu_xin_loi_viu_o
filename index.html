@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thư ngỏ xin lỗi vợ iu của chồng</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffcce6, #ffe6f2);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Background với mưa trái tim và hoa hồng */
+        .background-falling {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .falling-item {
+            position: absolute;
+            top: -50px;
+            font-size: 24px;
+            opacity: 0.7;
+            animation: falling linear infinite;
+            pointer-events: none;
+        }
+
+        .heart {
+            color: #ff3366;
+        }
+
+        .rose {
+            color: #ff6699;
+        }
+
+        /* Phong cách cho bức thư ban đầu */
+        .letter-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .letter-container {
+            background-color: #fff;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            position: relative;
+            animation: slideUp 0.5s ease;
+            z-index: 101;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #ff6699;
+            transition: transform 0.3s;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .letter-content h2 {
+            color: #ff6699;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .letter-content p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .letter-note {
+            margin-top: 20px;
+            font-style: italic;
+            color: #ff6699;
+            text-align: center;
+        }
+
+        /* Phong cách cho bó hoa */
+        .flower-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+            animation: fadeIn 1s ease;
+            z-index: 10;
+            position: relative;
+        }
+
+        .bouquet {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .bouquet img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .bouquet:hover {
+            transform: scale(1.05);
+        }
+
+        .greeting {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #ff3366;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            position: relative;
+        }
+
+        /* Phong cách cho thư nhỏ */
+        .small-letter {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            z-index: 200;
+            animation: popIn 0.5s ease;
+        }
+
+        .small-letter-content {
+            text-align: center;
+        }
+
+        .small-letter-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .small-letter-content p {
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Nút trái tim chuyển thư */
+        .heart-button {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background-color: #ff3366;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 201;
+        }
+
+        .heart-button:hover {
+            background-color: #ff6699;
+            transform: scale(1.1);
+        }
+
+        .heart-button::before {
+            content: "♥";
+            color: white;
+            font-size: 20px;
+        }
+
+        /* Nút tha thứ / không tha thứ */
+        #forgiveButtons {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 300;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 40px;
+            border-radius: 30px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+            max-width: 90%;
+            animation: popIn 0.5s ease;
+        }
+
+        #forgiveButtons h2 {
+            color: #ff3366;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        #forgiveBtn {
+            background: #ff3366;
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4);
+            transition: 0.3s;
+        }
+
+        #forgiveBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 51, 102, 0.6);
+        }
+
+        #notForgiveBtn {
+            background: #e0e0e0;
+            border: none;
+            color: #333;
+            padding: 15px 40px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+            position: relative;
+        }
+
+        /* Pháo hoa */
+        #fireworksContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            display: none;
+        }
+
+        .firework-particle {
+            position: fixed;
+            pointer-events: none;
+            font-size: 30px;
+            z-index: 999;
+            opacity: 1;
+            transition: none;
+        }
+
+        /* Dòng chữ cuối */
+        #finalMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            color: #ff3366;
+            font-weight: bold;
+            text-shadow: 0 0 30px rgba(255, 51, 102, 0.8);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 30px 50px;
+            border-radius: 30px;
+            animation: popIn 0.8s ease;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+            #finalMessage {
+                font-size: 30px;
+                padding: 20px 30px;
+                white-space: normal;
+            }
+            #forgiveButtons {
+                padding: 20px;
+            }
+            #forgiveBtn, #notForgiveBtn {
+                padding: 12px 25px;
+                font-size: 18px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes falling {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background với mưa trái tim và hoa hồng -->
+    <div class="background-falling" id="fallingBackground"></div>
+
+    <!-- Bức thư ban đầu -->
+    <div class="letter-overlay" id="initialLetter">
+        <div class="letter-container">
+            <span class="close-btn" id="closeLetter">&times;</span>
+            <div class="letter-content">
+                <h2>Gửi đến em, ngoại lệ của chồng</h2>
+                <p>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</p>
+                <p>Độc Lập - Tự do - Hạnh phúc</p>
+                Kính gửi: Vợ iu của chồng<br>
+                Anh tên: Võ Nguyễn Duy Quang<br>
+                Sinh ngày: 2/1/2004<br><br>
+                Hôm nay vào lúc 22h09 phút, chồng đã thả tym tin nhắn vợ và không nt lại cho vợ. Sau khi được vợ nhắc nhở, và chồng tự kiểm điểm bản thân. Và nhận thức rằng hành động đó làm vợ khó chịu, và chồng đã rất ân hận.<br>
+                Chồng xin khắc phục hậu quả bằng cách không tái phạm hành động làm vợ buồn, ôm vợ nhiều hơn, hôn vợ nhiều hơn, xoa đầu vợ nhiều hơn<br>
+                Thưa vợ ông bà ta có câu đánh kẻ chạy đi, hổng ai đánh kẻ chạy lại. Chính vì thế chồng chân thành tha thiết mong nhận được sự xét xử và tha thứ từ vợ ạ
+                <p>ký tên</p>
+                <p>Chồng iu của vợ ❤️❤️</p>
+                <p class="letter-note">Hãy nhấn vào bó hoa nhé vợ iu 🥺🥺!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bó hoa -->
+    <div class="flower-container" id="flowerContainer">
+        <div class="bouquet" id="bouquet">
+            <!-- Thay thế đường dẫn ảnh bó hoa tại đây -->
+            <img src="Bo_hoa_chinh1.png" alt="Bó hoa hồng">
+        </div>
+        <div class="greeting">Xin lỗi vịu ơ của chồng 🥺🥺🥺🥺</div>
+    </div>
+
+    <!-- Thư nhỏ 1 -->
+    <div class="small-letter" id="smallLetter1">
+        <div class="small-letter-content">
+            <!-- Thay đổi đường dẫn ảnh tại đây -->
+            <img src="FB_IMG_1.jpg" alt="Hình ảnh động viên">
+            <p> ebee của chồng ơi, ebee của chồng tha thứ cho a lần này nhá ebee, a sẽ không tái phạm hành vi nào dẫnn đến hậu quả làm ebee của chồng đau lòng đâu ạ, vợ ơii tha thứ cho chồng nha, đi mà vợ, năn nỉ vợ iuuuu ạaa🥺🥺 </p>
+        </div>
+        <div class="heart-button" id="heartButton1"></div>
+    </div>
+
+    <!-- Thư nhỏ 2 -->
+    <div class="small-letter" id="smallLetter2">
+        <div class="small-letter-content">
+            <!-- Thay đổi đường dẫn ảnh tại đây -->
+            <img src="FB_IMG_2.jpg" alt="Hình ảnh động viên">
+            <p> Vợ ơiiii, tình yêu của anh, ngoại lệ của a ơiii<br><br>
+                Anh biết là hành động của anh đã làm cho vợ tổn thương. Anh ước gì thời gian quay trở lại để không làm ra hành động đó. Anh sai rồi, tha thứ cho anh đi mà!!! 😭<br>
+                Mà em biết không, tức giận sẽ tốn rất nhiều năng lượng đấy, lại còn không xinh đẹp nữa. Thôi mình giận nhau làm gì, hay là vợ cắn a một miếng để a trả giá vì hành động làm bé buồn được hông ạ🥺🥺. Anh xin lỗi, đừng giận nữa nha my babyboooo. Vợ iu tha lỗi cho chồng nhé 💕</p>
+        </div>
+        <div class="heart-button" id="heartButton2"></div>
+    </div>
+
+    <!-- Thư nhỏ 3 -->
+    <div class="small-letter" id="smallLetter3">
+        <div class="small-letter-content">
+            <!-- Thay đổi đường dẫn ảnh tại đây -->
+            <img src="FB_IMG_3.jpg" alt="Hình ảnh động viên">
+            <p>Vợ xem xét cho chồng lần này với ạ. Chồng ước là có thể quay lại được thời điểm ấy, vợ đừng giận chồng nữa được hông, cho chồng ôm vợ nhá được hông vợ🥺🥺</p>
+        </div>
+        <div class="heart-button" id="heartButton3"></div>
+    </div>
+
+    <!-- Hai nút lựa chọn -->
+    <div id="forgiveButtons">
+        <h2>Chồng xin lỗi vợ, vợ có tha thứ cho chồng không?</h2>
+        <button id="forgiveBtn">Tha thứ cho chồng ❤️</button>
+        <button id="notForgiveBtn">Không tha thứ 😤</button>
+    </div>
+
+    <!-- Container pháo hoa -->
+    <div id="fireworksContainer"></div>
+
+    <!-- Dòng chữ cuối -->
+    <div id="finalMessage">Yêu vợ của chồng ❤️</div>
+
+    <script>
+        // ============================
+        // 1. Tạo mưa trái tim & hoa hồng
+        // ============================
+        function createFallingItems() {
+            const background = document.getElementById('fallingBackground');
+            const items = ['❤️', '🌹', '💖', '🌸', '💝', '🌺', '💕', '🏵️'];
+            for (let i = 0; i < 50; i++) {
+                const item = document.createElement('div');
+                const randomItem = items[Math.floor(Math.random() * items.length)];
+                item.classList.add('falling-item');
+                item.innerHTML = randomItem;
+                if (randomItem === '❤️' || randomItem === '💖' || randomItem === '💝' || randomItem === '💕') {
+                    item.classList.add('heart');
+                } else {
+                    item.classList.add('rose');
+                }
+                const left = Math.random() * 100;
+                item.style.left = `${left}vw`;
+                const duration = 5 + Math.random() * 10;
+                item.style.animationDuration = `${duration}s`;
+                const delay = Math.random() * 5;
+                item.style.animationDelay = `${delay}s`;
+                const size = 20 + Math.random() * 20;
+                item.style.fontSize = `${size}px`;
+                background.appendChild(item);
+            }
+        }
+        window.addEventListener('load', createFallingItems);
+
+        // ============================
+        // 2. Đóng thư ban đầu
+        // ============================
+        function closeInitialLetter() {
+            document.getElementById('initialLetter').style.display = 'none';
+            document.getElementById('flowerContainer').style.display = 'flex';
+        }
+        document.getElementById('closeLetter').addEventListener('click', closeInitialLetter);
+        document.getElementById('initialLetter').addEventListener('click', function(e) {
+            if (e.target === this) closeInitialLetter();
+        });
+
+        // ============================
+        // 3. Logic hiển thị thư nhỏ & nút chọn
+        // ============================
+        const smallLetters = [
+            document.getElementById('smallLetter1'),
+            document.getElementById('smallLetter2'),
+            document.getElementById('smallLetter3')
+        ];
+        const forgiveDiv = document.getElementById('forgiveButtons');
+        const notForgiveBtn = document.getElementById('notForgiveBtn');
+        const forgiveBtn = document.getElementById('forgiveBtn');
+        const fireworksContainer = document.getElementById('fireworksContainer');
+        const finalMessage = document.getElementById('finalMessage');
+
+        let step = 0;             // số thư đã hiển thị (0,1,2 -> 3 là đã đọc hết)
+        let isForgiveShown = false; // đã hiển thị nút chọn chưa
+
+        function showNext() {
+            if (isForgiveShown) return;
+
+            if (step < 3) {
+                // Ẩn tất cả thư
+                smallLetters.forEach(l => l.style.display = 'none');
+                // Hiển thị thư thứ step (0,1,2)
+                smallLetters[step].style.display = 'block';
+                step++;
+            } else {
+                // Đã đọc hết 3 thư -> hiển thị nút
+                smallLetters.forEach(l => l.style.display = 'none');
+                forgiveDiv.style.display = 'block';
+                isForgiveShown = true;
+                // (có thể ẩn bó hoa nếu muốn)
+                // document.getElementById('flowerContainer').style.display = 'none';
+            }
+        }
+
+        // Nhấn bó hoa -> mở thư tiếp theo
+        document.getElementById('bouquet').addEventListener('click', showNext);
+
+        // Nhấn nút trái tim trong thư -> mở thư tiếp theo
+        document.querySelectorAll('.heart-button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showNext();
+            });
+        });
+
+        // ============================
+        // 4. Xử lý nút "Không tha thứ" -> chạy lung tung
+        // ============================
+        function moveNotForgiveBtn() {
+            const btn = notForgiveBtn;
+            const rect = btn.getBoundingClientRect();
+            const maxX = window.innerWidth - rect.width - 10;
+            const maxY = window.innerHeight - rect.height - 10;
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
+            btn.style.position = 'fixed';
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+            btn.style.transition = 'none';
+        }
+
+        // Di chuyển khi chuột di vào hoặc click
+        notForgiveBtn.addEventListener('mouseover', moveNotForgiveBtn);
+        notForgiveBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            moveNotForgiveBtn();
+        });
+
+        // ============================
+        // 5. Xử lý nút "Tha thứ" -> pháo hoa + kết thúc
+        // ============================
+        forgiveBtn.addEventListener('click', function() {
+            // Ẩn nút chọn
+            forgiveDiv.style.display = 'none';
+            // Bắt đầu pháo hoa
+            startFireworks();
+        });
+
+        function startFireworks() {
+            const container = fireworksContainer;
+            container.style.display = 'block';
+            container.innerHTML = ''; // xóa cũ nếu có
+
+            const emojis = ['🌸', '💖', '⭐', '✨', '🦋', '🌺', '💕', '🥰', '😍', '💗', '🌹', '🏵️', '🌈', '💫', '🎉', '🎊'];
+            const particles = [];
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            // Tạo 80 hạt
+            for (let i = 0; i < 80; i++) {
+                const el = document.createElement('div');
+                el.classList.add('firework-particle');
+                el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                const angle = Math.random() * 2 * Math.PI;
+                const speed = 100 + Math.random() * 350;
+                const vx = Math.cos(angle) * speed;
+                const vy = Math.sin(angle) * speed - 200;
+                el.style.left = centerX + 'px';
+                el.style.top = centerY + 'px';
+                el.style.fontSize = (22 + Math.random() * 30) + 'px';
+                container.appendChild(el);
+                particles.push({
+                    el: el,
+                    x: centerX,
+                    y: centerY,
+                    vx: vx,
+                    vy: vy,
+                    life: 1.0,
+                    decay: 0.005 + Math.random() * 0.012,
+                    gravity: 150
+                });
+            }
+
+            let lastTime = performance.now();
+
+            function animate(time) {
+                const dt = Math.min((time - lastTime) / 1000, 0.05);
+                lastTime = time;
+                let allDead = true;
+
+                for (let p of particles) {
+                    if (p.life <= 0) {
+                        p.el.style.display = 'none';
+                        continue;
+                    }
+                    allDead = false;
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.vy += p.gravity * dt;
+                    p.life -= p.decay * dt;
+                    if (p.life < 0) p.life = 0;
+
+                    p.el.style.left = p.x + 'px';
+                    p.el.style.top = p.y + 'px';
+                    p.el.style.opacity = p.life;
+                    p.el.style.transform = `scale(${p.life}) rotate(${p.vx * 5}deg)`;
+                }
+
+                if (!allDead) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // Kết thúc pháo hoa
+                    container.style.display = 'none';
+                    particles.forEach(p => p.el.remove());
+                    // Hiển thị dòng chữ cuối
+                    finalMessage.style.display = 'block';
+                    // Sau 2.5 giây thoát web
+                    setTimeout(() => {
+                        // Thử đóng tab
+                        window.close();
+                        // Nếu không được, chuyển hướng
+                        setTimeout(() => {
+                            window.location.href = 'about:blank';
+                        }, 300);
+                    }, 2500);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // ============================
+        // 6. (Tùy chọn) Khởi tạo lại nếu cần
+        // ============================
+        // (Không có gì thêm)
+        console.log('💖 Chúc vợ iu luôn vui vẻ!');
+    </script>
+</body>
+</html>
